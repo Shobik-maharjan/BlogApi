@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('blogs', function (Blueprint $table) {
-            $table->id();
-            $table-> string('name');
-            $table-> string('description');
-            $table-> string('imgae')->nullable();
-            $table->string('category')->nullable();
-            $table->string('tags')->nullable();
+        Schema::create('tags', function (Blueprint $table) {
+            $table->string('tags_name')->primary();
             $table->timestamps();
+        });
+
+        Schema::table('blogs', function (Blueprint $table) {
+            $table->string('tags_name');
+            $table->foreign("tags_name")->references('tags_name')->on('tags')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('blogs');
+        Schema::dropIfExists('tags');
     }
 };

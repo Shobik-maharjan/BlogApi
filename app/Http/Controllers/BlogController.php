@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Blog;
+use App\Models\Category;
+use App\Models\Tag;
 use Illuminate\Support\Facades\Validator;
 
 class BlogController extends Controller
@@ -26,6 +28,8 @@ class BlogController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'description' => "required",
+            'category_name' => "required",
+            'tags_name' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -39,9 +43,8 @@ class BlogController extends Controller
 
             $blog->name = $request->name;
             $blog->description = $request->description;
-            $blog->category = $request->category;
-            $blog->description = $request->description;
-            $blog->tags = $request->tags;
+            $blog->category_name = $request->category_name;
+            $blog->tags_name = $request->tags_name;
 
             $blog->save();
 
@@ -57,18 +60,22 @@ class BlogController extends Controller
     {
         $blog = Blog::find($id);
 
-        $blog->name = $request->name;
-        $blog->description = $request->description;
-        $blog->tags = $request->tags;
+        if ($blog != null) {
 
-        $blog->save();
+            $blog->name = $request->name;
+            $blog->description = $request->description;
+            $blog->category_name = $request->category_name;
+            $blog->tags_name = $request->tags_name;
 
-        $data = [
-            'status' => 200,
-            'message' => $blog
-        ];
+            $blog->save();
 
-        return response()->json($data, 200);
+            $data = [
+                'status' => 200,
+                'message' => $blog
+            ];
+
+            return response()->json($data, 200);
+        }
     }
 
     public function deleteBlog($id)
