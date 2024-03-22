@@ -13,7 +13,7 @@ class BlogController extends Controller
 {
     public function index()
     {
-        $blogs = Blog::all();
+        $blogs = Blog::with('tags')->get();
 
         $data = [
 
@@ -28,8 +28,9 @@ class BlogController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'description' => "required",
-            'category_name' => "required",
-            'tags_name' => 'required',
+            'category_id' => "required",
+            'tag_id' => 'required',
+            'image' => 'image|mimes:png,jpg,jpeg'
         ]);
 
         if ($validator->fails()) {
@@ -43,14 +44,19 @@ class BlogController extends Controller
 
             $blog->name = $request->name;
             $blog->description = $request->description;
-            $blog->category_name = $request->category_name;
-            $blog->tags_name = $request->tags_name;
+            $blog->category_id = $request->category_id;
+            $blog->tag_id = $request->tag_id;
+
+            $imageName = time() . '.' . $request->image->extension();
+
+            $blog->image = $request->image->storeAs('images', $imageName);
 
             $blog->save();
 
             $data = [
                 'status' => 200,
-                'message' => 'data uploaded successfully'
+                'message' => 'data uploaded successfully',
+                'imagepath' => asset('image/' . $imageName)
             ];
 
             return response()->json($data, 200);
@@ -64,8 +70,8 @@ class BlogController extends Controller
 
             $blog->name = $request->name;
             $blog->description = $request->description;
-            $blog->category_name = $request->category_name;
-            $blog->tags_name = $request->tags_name;
+            $blog->category_id = $request->category_id;
+            $blog->tag_id = $request->tag_id;
 
             $blog->save();
 

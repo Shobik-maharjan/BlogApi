@@ -12,16 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('categories', function (Blueprint $table) {
-
-            $table->string('category')->primary()->unique();
+            $table->id();
+            $table->string('category');
             $table->timestamps();
         });
 
         Schema::table('blogs', function (Blueprint $table) {
-            $table->string('category_name'); // Define category_name column in blogs table
+            // $table->string('category_id'); // Define category_id column in blogs table
 
-            $table->foreign('category_name') // Reference category_name column
-                ->references('category')->on('categories')
+            $table->foreignId('category_id') // Reference category_id column
+                ->constrained()
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
         });

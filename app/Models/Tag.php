@@ -10,6 +10,6 @@ class Tag extends Model
     use HasFactory;
 
     protected $fillable = [
-        'tags_name',
+        'tag_name',
     ];
 }
