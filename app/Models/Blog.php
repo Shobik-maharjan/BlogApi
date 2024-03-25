@@ -25,10 +25,13 @@ class Blog extends Model
         return $this->belongsTo(Category::class);
     }
 
-
+    public function tag(): BelongsTo
+    {
+        return $this->belongsTo(Tag::class);
+    }
 
     public function tags(): BelongsToMany
     {
-        return $this->belongsToMany(Tag::class, 'pivot_blog_tag', 'blog_id', 'tag_id')->using(PivotBlogTag::class);
+        return $this->belongsToMany(Tag::class, 'pivot_blog_tag', 'blog_id', 'tag_id');
     }
 }

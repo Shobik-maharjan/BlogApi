@@ -17,10 +17,10 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::table('blogs', function (Blueprint $table) {
-            // $table->string('tag_name');
-            $table->foreignId("tag_id")->constrained()->onUpdate('cascade')->onDelete('cascade');
-        });
+        // Schema::table('blogs', function (Blueprint $table) {
+        //     // $table->string('tag_name');
+        //     $table->foreignId("tag_id")->constrained()->onUpdate('cascade')->onDelete('cascade');
+        // });
     }
 
     /**

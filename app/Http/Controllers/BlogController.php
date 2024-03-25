@@ -6,95 +6,180 @@ use Illuminate\Http\Request;
 
 use App\Models\Blog;
 use App\Models\Category;
+use App\Models\PivotBlogTag;
 use App\Models\Tag;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class BlogController extends Controller
 {
     public function index()
     {
-        $blogs = Blog::with('tags', 'category')->get();
+        try {
 
-        $data = [
+            $blogs = Blog::with('tags', 'category')->get();
 
-            'status' => 200,
-            'blogs' => $blogs
-        ];
-        return response()->json($data, 200);
+            $data = [
+
+                'status' => 200,
+                'blogs' => $blogs
+            ];
+            return response()->json($data, 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    public function getSingleBlog($id)
+    {
+        try {
+
+            $blogs = Blog::with('tags', 'category')->find($id);
+
+            $data = [
+
+                'status' => 200,
+                'blogs' => $blogs
+            ];
+            return response()->json($data, 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
     }
 
     public function createBlog(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'description' => "required",
-            'category_id' => "required",
-            'tag_id' => 'required',
-            'category_id' => 'required',
-            'image' => 'image|mimes:png,jpg,jpeg'
-        ]);
+        try {
 
-        if ($validator->fails()) {
-            $data = [
-                'status' => 422,
-                "message" => $validator->messages()
-            ];
-            return response()->json($data, 422);
-        } else {
-            $blog = new Blog;
+            $validator = Validator::make($request->all(), [
+                'name' => 'required',
+                'description' => "required",
+                'category_id' => "required",
+                // 'tag_id' => 'required|array',
+                'category_id' => 'required',
+                'image' => 'image|mimes:png,jpg,jpeg'
+            ]);
 
-            $blog->name = $request->name;
-            $blog->description = $request->description;
-            $blog->category_id = $request->category_id;
-            $blog->tag_id = $request->tag_id;
+            if ($validator->fails()) {
+                $data = [
+                    'status' => 422,
+                    "message" => $validator->messages()
+                ];
+                return response()->json($data, 422);
+            } else {
+                // dd($request->tag_id);
+                $blog = new Blog;
 
-            $imageName = time() . '.' . $request->image->extension();
+                $blog->name = $request->name;
+                $blog->description = $request->description;
+                $blog->category_id = $request->category_id;
+                // $blog->tag_id = ($request->tag_id);
 
-            $blog->image = $request->image->storeAs('images', $imageName);
+                // $imageName = time() . '.' . $request->image->extension();
+
+                // $blog->image = $request->image->storeAs('images', $imageName);
+
+                $blog->save();
+                // $blog->id;
+                foreach ($request->tag_id as $data) {
+                    $new = PivotBlogTag::insert([
+                        'blog_id' => $blog->id,
+                        'tag_id' => $data
+                    ]);
+                }
+                $data = [
+                    'status' => 200,
+                    'message' => 'data uploaded successfully',
+                    // 'imagepath' => asset('image/' . $imageName)
+                ];
+
+                return response()->json($data, 200);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    public function addImage(Request $request, $id)
+    {
+        try {
+
+            Validator::make($request->all(), [
+                'image' => 'image|mimes:png,jpg,jpeg'
+            ]);
+
+            $imageName = $request->file('image');
+            $path = Storage::disk('public')->put('blogImage', $imageName);
+
+            $blog = Blog::find($id);
+
+            $blog->image = $path;
 
             $blog->save();
+            // $imageName = time() . '.' . $request->image->extension();
+            // dd($path);
 
-            $data = [
-                'status' => 200,
-                'message' => 'data uploaded successfully',
-                'imagepath' => asset('image/' . $imageName)
-            ];
 
-            return response()->json($data, 200);
+
+            $blog->image = $request->image->storeAs($path);
+
+            return response()->json(['message' => 'image added successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
         }
     }
     public function editBlog(Request $request, $id)
     {
-        $blog = Blog::find($id);
+        try {
+            $blog = Blog::find($id);
 
-        if ($blog != null) {
+            if ($blog != null) {
 
-            $blog->name = $request->name;
-            $blog->description = $request->description;
-            $blog->category_id = $request->category_id;
-            $blog->tag_id = $request->tag_id;
+                $blog->name = $request->name;
+                $blog->description = $request->description;
+                $blog->category_id = $request->category_id;
+                // $blog->tag_id = $request->tag_id;
 
-            $blog->save();
+                $blog->save();
 
-            $data = [
-                'status' => 200,
-                'message' => $blog
-            ];
+                // $new = DB::table('pivot_blog_tag')->where('blog_id', $id)->delete();
+                PivotBlogTag::where("blog_id", $id)->delete();
 
-            return response()->json($data, 200);
+                foreach ($request->tag_id as $data) {
+                    PivotBlogTag::insert([
+                        "blog_id" => $id,
+                        'tag_id' => $data
+                    ]);
+                }
+
+                $data = [
+                    'status' => 200,
+                    'message' => $blog,
+                    // 'tag' => $new
+                ];
+
+                return response()->json($data, 200);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
         }
     }
 
     public function deleteBlog($id)
     {
-        $blog = Blog::find($id);
-        $blog->delete();
+        try {
+            $blog = Blog::find($id);
+            $blog->delete();
 
-        $data = [
-            'status' => 200,
-            'message' => "data deleted successfully"
-        ];
+            $data = [
+                'status' => 200,
+                'message' => "data deleted successfully"
+            ];
 
-        return response()->json($data, 200);
+            return response()->json($data, 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
     }
 }

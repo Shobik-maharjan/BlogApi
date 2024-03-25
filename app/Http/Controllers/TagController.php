@@ -3,59 +3,80 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tag;
+use Exception;
 use Illuminate\Http\Request;
 
 class TagController extends Controller
 {
     public function getTag()
     {
-        $tag = Tag::all();
+        try {
 
-        $data = [
-            'status' => 200,
-            'tags' => $tag
-        ];
-        return response()->json($data, 200);
+            $tag = Tag::all();
+
+            $data = [
+                'status' => 200,
+                'tags' => $tag
+            ];
+            return response()->json($data, 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
     }
 
     public function createTag(Request $request)
     {
-        $tag = new Tag;
+        try {
 
-        $tag->tag = $request->tag;
+            $tag = new Tag;
 
-        $tag->save();
+            $tag->tag = $request->tag;
 
-        $data = [
-            'status' => 200,
-            'message' => "data uploaded successfully"
-        ];
-        return response()->json($data, 200);
+            $tag->save();
+
+            $data = [
+                'status' => 200,
+                'message' => "data uploaded successfully"
+            ];
+            return response()->json($data, 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
     }
 
     public function editTag(Request $request, $id)
     {
-        $tag = Tag::find($id);
-        $tag->tag = $request->tag;
-        $tag->save();
+        try {
 
-        $data = [
-            'status' => 200,
-            'message' => $tag
-        ];
+            $tag = Tag::find($id);
+            $tag->tag = $request->tag;
+            $tag->save();
 
-        return response()->json($data, 200);
+            $data = [
+                'status' => 200,
+                'message' => $tag
+            ];
+
+            return response()->json($data, 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
     }
 
     public function deleteTag($id)
     {
-        $tag = Tag::fund($id);
-        $tag->delete();
+        try {
 
-        $data = [
-            'status' => 200,
-            'message' => "tag deleted successfully"
-        ];
-        return response()->json($data, 200);
+            $tag = Tag::fund($id);
+            $tag->delete();
+
+            $data = [
+                'status' => 200,
+                'message' => "tag deleted successfully"
+            ];
+            return response()->json($data, 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
     }
 }

@@ -10,67 +10,85 @@ class CategoryController extends Controller
 {
     public function getCategory()
     {
-        $category = Category::all();
+        try {
 
-        $data = [
-            'status' => 200,
-            'category' => $category
-        ];
-        return response()->json($data, 200);
+            $category = Category::all();
+
+            $data = [
+                'status' => 200,
+                'category' => $category
+            ];
+            return response()->json($data, 200);
+        } catch (\Exception $e) {
+            return response()->json(["message" => $e->getMessage()], 400);
+        }
     }
 
     public function createCategory(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'category' => 'required'
-        ]);
+        try {
 
-        if ($validator->fails()) {
-            $data = [
-                'status' => 412,
-                "message" => $validator->error()
-            ];
-            return response()->json($data, 412);
-        } else {
+            $validator = Validator::make($request->all(), [
+                'category' => 'required'
+            ]);
 
-            $category = new Category;
-            $category->category = $request->category;
-            $category->save();
+            if ($validator->fails()) {
+                $data = [
+                    'status' => 412,
+                    "message" => $validator->error()
+                ];
+                return response()->json($data, 412);
+            } else {
 
-            $data = [
-                'status' => 200,
-                'message' => 'category added successfully'
-            ];
-            return response()->json($data, 200);
+                $category = new Category;
+                $category->category = $request->category;
+                $category->save();
+
+                $data = [
+                    'status' => 200,
+                    'message' => 'category added successfully'
+                ];
+                return response()->json($data, 200);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
         }
     }
 
     public function editCategory(Request $request, $id)
     {
-        $category = Category::find($id);
+        try {
+            $category = Category::find($id);
 
-        $category->category = $request->category;
-        $category->save();
+            $category->category = $request->category;
+            $category->save();
 
-        $data = [
-            'status' => 200,
-            'message' => $category
-        ];
+            $data = [
+                'status' => 200,
+                'message' => $category
+            ];
 
-        return response()->json($data, 200);
+            return response()->json($data, 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
     }
 
 
     public function deleteCategory($id)
     {
-        $category = Category::find($id);
+        try {
+            $category = Category::find($id);
 
-        $category->delete();
+            $category->delete();
 
-        $data = [
-            'status' => 200,
-            'message' => "data deleted successfully"
-        ];
-        return response()->json($data, 200);
+            $data = [
+                'status' => 200,
+                'message' => "data deleted successfully"
+            ];
+            return response()->json($data, 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
     }
 }

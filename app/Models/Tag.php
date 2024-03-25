@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Tag extends Model
 {
@@ -14,8 +15,8 @@ class Tag extends Model
         'tag',
     ];
 
-    public function blogs(): BelongsToMany
+    public function blogs(): HasMany
     {
-        return $this->belongsToMany(Blog::class, 'pivot_blog_tag', 'tag_id', 'blog_id');
+        return $this->hasMany(Blog::class);
     }
 }

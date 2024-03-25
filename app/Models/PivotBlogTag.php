@@ -17,13 +17,13 @@ class PivotBlogTag extends Model
         'tag_id'
     ];
 
-    public function blogs(): BelongsToMany
-    {
-        return $this->belongsToMany(Blog::class);
-    }
+    // public function blogs(): BelongsToMany
+    // {
+    //     return $this->belongsToMany(Blog::class);
+    // }
 
-    public function tags(): BelongsToMany
-    {
-        return $this->belongsToMany(Tag::class);
-    }
+    // public function tags(): BelongsToMany
+    // {
+    //     return $this->belongsToMany(Tag::class);
+    // }
 }
