@@ -18,7 +18,7 @@ return new class extends Migration
         });
 
         Schema::table('blogs', function (Blueprint $table) {
-            // $table->string('category_id'); // Define category_id column in blogs table
+            //     // $table->string('category_id'); // Define category_id column in blogs table
 
             $table->foreignId('category_id') // Reference category_id column
                 ->constrained()

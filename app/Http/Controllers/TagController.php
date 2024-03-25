@@ -22,7 +22,7 @@ class TagController extends Controller
     {
         $tag = new Tag;
 
-        $tag->tag_name = $request->tag_name;
+        $tag->tag = $request->tag;
 
         $tag->save();
 
@@ -36,7 +36,7 @@ class TagController extends Controller
     public function editTag(Request $request, $id)
     {
         $tag = Tag::find($id);
-        $tag->tag_name = $request->tag_name;
+        $tag->tag = $request->tag;
         $tag->save();
 
         $data = [

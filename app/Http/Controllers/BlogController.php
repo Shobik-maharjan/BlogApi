@@ -13,7 +13,7 @@ class BlogController extends Controller
 {
     public function index()
     {
-        $blogs = Blog::with('tags')->get();
+        $blogs = Blog::with('tags', 'category')->get();
 
         $data = [
 
@@ -30,6 +30,7 @@ class BlogController extends Controller
             'description' => "required",
             'category_id' => "required",
             'tag_id' => 'required',
+            'category_id' => 'required',
             'image' => 'image|mimes:png,jpg,jpeg'
         ]);
 
