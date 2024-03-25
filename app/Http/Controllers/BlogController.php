@@ -120,9 +120,7 @@ class BlogController extends Controller
             // $imageName = time() . '.' . $request->image->extension();
             // dd($path);
 
-
-
-            $blog->image = $request->image->storeAs($path);
+            // $blog->image = $request->image->storeAs($path);
 
             return response()->json(['message' => 'image added successfully']);
         } catch (\Exception $e) {
