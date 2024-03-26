@@ -55,7 +55,6 @@ class BlogController extends Controller
             $validator = Validator::make($request->all(), [
                 'name' => 'required',
                 'description' => "required",
-                'category_id' => "required",
                 // 'tag_id' => 'required|array',
                 'category_id' => 'required',
                 'image' => 'image|mimes:png,jpg,jpeg'
@@ -82,11 +81,13 @@ class BlogController extends Controller
 
                 $blog->save();
                 // $blog->id;
-                foreach ($request->tag_id as $data) {
-                    $new = PivotBlogTag::insert([
-                        'blog_id' => $blog->id,
-                        'tag_id' => $data
-                    ]);
+                if ($request->tag_id != null) {
+                    foreach ($request->tag_id as $data) {
+                        $new = PivotBlogTag::insert([
+                            'blog_id' => $blog->id,
+                            'tag_id' => $data
+                        ]);
+                    }
                 }
                 $data = [
                     'status' => 200,

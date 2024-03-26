@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Tag;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class TagController extends Controller
 {
@@ -27,18 +28,29 @@ class TagController extends Controller
     public function createTag(Request $request)
     {
         try {
+            $validator = Validator::make($request->all(), [
+                'tag' => 'required|unique:tags',
+            ]);
+            if ($validator->fails()) {
+                $data = [
+                    'status' => 422,
+                    "message" => $validator->messages()
+                ];
+                return response()->json($data, 422);
+            } else {
 
-            $tag = new Tag;
+                $tag = new Tag;
 
-            $tag->tag = $request->tag;
+                $tag->tag = $request->tag;
 
-            $tag->save();
+                $tag->save();
 
-            $data = [
-                'status' => 200,
-                'message' => "data uploaded successfully"
-            ];
-            return response()->json($data, 200);
+                $data = [
+                    'status' => 200,
+                    'message' => "data uploaded successfully"
+                ];
+                return response()->json($data, 200);
+            }
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 400);
         }
