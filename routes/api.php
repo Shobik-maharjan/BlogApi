@@ -40,9 +40,3 @@ Route::get('/tag', [TagController::class, 'getTag']);
 Route::post('/create/tag', [TagController::class, 'createTag']);
 Route::put('/edit/tag/{id}', [TagController::class, 'editTag']);
 Route::delete('/delete/tag/{id}', [TagController::class, 'deleteTag']);
-
-// image route
-Route::get('/image', [TagController::class, 'getImage']);
-Route::post('/create/image', [TagController::class, 'setImage']);
-Route::put('/edit/image/{id}', [TagController::class, 'editImage']);
-Route::delete('/delete/image/{id}', [TagController::class, 'deleteImage']);

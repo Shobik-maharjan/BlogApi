@@ -36,7 +36,6 @@ class BlogController extends Controller
         try {
 
             $blogs = Blog::with('tags', 'category')->find($id);
-
             $data = [
 
                 'status' => 200,
@@ -55,7 +54,6 @@ class BlogController extends Controller
             $validator = Validator::make($request->all(), [
                 'name' => 'required',
                 'description' => "required",
-                // 'tag_id' => 'required|array',
                 'category_id' => 'required',
                 'image' => 'image|mimes:png,jpg,jpeg'
             ]);
@@ -69,14 +67,12 @@ class BlogController extends Controller
             } else {
                 // dd($request->tag_id);
                 $blog = new Blog;
-
                 $blog->name = $request->name;
                 $blog->description = $request->description;
                 $blog->category_id = $request->category_id;
+
                 // $blog->tag_id = ($request->tag_id);
-
                 // $imageName = time() . '.' . $request->image->extension();
-
                 // $blog->image = $request->image->storeAs('images', $imageName);
 
                 $blog->save();
@@ -110,17 +106,20 @@ class BlogController extends Controller
                 'image' => 'image|mimes:png,jpg,jpeg'
             ]);
 
-            $imageName = $request->file('image');
-            $path = Storage::disk('public')->put('blogImage', $imageName);
+            if ($request->hasFile('image')) {
+
+                $imageName = $request->file('image');
+                $path = Storage::disk('public')->put('blogImage', $imageName);
+            } else {
+                return response()->json(['message' => "No image uploaded"], 400);
+            }
 
             $blog = Blog::find($id);
-
             $blog->image = $path;
-
             $blog->save();
+
             // $imageName = time() . '.' . $request->image->extension();
             // dd($path);
-
             // $blog->image = $request->image->storeAs($path);
 
             return response()->json(['message' => 'image added successfully']);
