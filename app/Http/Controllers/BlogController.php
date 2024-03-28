@@ -55,7 +55,7 @@ class BlogController extends Controller
                 'name' => 'required',
                 'description' => "required",
                 'category_id' => 'required',
-                'image' => 'image|mimes:png,jpg,jpeg'
+                // 'image' => 'image|mimes:png,jpg,jpeg'
             ]);
 
             if ($validator->fails()) {
