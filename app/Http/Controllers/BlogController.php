@@ -53,7 +53,7 @@ class BlogController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'name' => 'required',
-                'description' => "required",
+                'description' => "required|array",
                 'category_id' => 'required',
                 // 'image' => 'image|mimes:png,jpg,jpeg'
             ]);
@@ -127,6 +127,7 @@ class BlogController extends Controller
             return response()->json(['message' => $e->getMessage()], 400);
         }
     }
+
     public function editBlog(Request $request, $id)
     {
         try {

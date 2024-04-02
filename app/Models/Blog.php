@@ -34,4 +34,7 @@ class Blog extends Model
     {
         return $this->belongsToMany(Tag::class, 'pivot_blog_tag', 'blog_id', 'tag_id');
     }
+    protected $casts = [
+        'description' => 'array',
+    ];
 }
