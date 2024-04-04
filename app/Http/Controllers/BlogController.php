@@ -5,10 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Blog;
-use App\Models\Category;
 use App\Models\PivotBlogTag;
-use App\Models\Tag;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -53,7 +50,7 @@ class BlogController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'name' => 'required',
-                'description' => "required|array",
+                'description' => "required",
                 'category_id' => 'required',
                 // 'image' => 'image|mimes:png,jpg,jpeg'
             ]);
